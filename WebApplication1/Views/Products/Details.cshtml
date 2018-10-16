@@ -1,0 +1,121 @@
+﻿
+<div class="container">
+    <div class="card">
+        <div class="container-fliud">
+            <div class="wrapper row">
+                <div class="col-md-6">
+                    <div class="tab-content">
+                        <div class="tab-pane active" id="pic-1"><img class="img-thumbnail main-img" data-bind="attr: {src: ImageUrl}" /></div>
+
+                        <ul class="preview-thumbnail nav nav-tabs">
+
+                            <li class="thumb-btn">
+                                <button class="btn" data-bind="click: LeftThumbs"><</button>
+                            </li>
+                            <li>
+                                <ul class="nav nav-tabs thumbs-list" data-bind="foreach: ActivePictures">
+                                    <li class="thumb" data-bind="attr: {style: $root.ThumbsStyle}">
+                                        <a data-bind="click: $root.ChangePhoto"  data-toggle="tab" class="thumb-link">
+                                            <img class="img-thumbnail thumb-img" data-bind="attr: {src: PictureUrl}" />
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="thumb-btn">
+                                <button class="btn"  data-bind="click: RightThumbs">></button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="details col-md-6">
+                    <h1 data-bind="text: Name"></h1>
+                    <h4 class="font-bold">Price: <span style="color: blue" data-bind="text: Price"></span></h4>
+                    <div>
+                        <p class="product-description" data-bind="html: Description"></p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <h1 class="font-bold text-center">Price History</h1>
+            </div>
+            <div class="row" data-bind="foreach: Prices">
+                <div class="col-sm-2 text-center">
+                    <h4 data-bind="text: DateStr"></h4>
+                    <h3 class="font-bold" style="color: blue;" data-bind="text: PriceValue"></h3>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function GetProduct(id) {
+        $.get('@Url.Action("GetProduct", "Products")' + '/' + id, OnSuccess, "json").fail(function (data) {
+            alert("Fail")
+        });
+    }
+    function ProductModel(product) {
+        var self = this;
+        self.ImageUrl = ko.observable(product.Product.ImageUrl);
+        self.AllPictures = product.Thumbs;
+        self.PicturesCount = (self.AllPictures.length < 5 ? self.AllPictures.length : 5);
+        self.ActivePictures = ko.observableArray(self.AllPictures.slice(0, self.PicturesCount));
+        self.ActiveStart = 0;
+        self.Name = ko.observable(product.Product.Name);
+        self.Price = ko.observable(product.Product.Price);
+        self.Description = ko.observable(product.Product.Description);
+        self.Prices = ko.observableArray(product.PriceHistory);
+        self.LeftThumbs = function () {
+            if (self.ActiveStart <= 0) {
+                self.ActiveStart = self.AllPictures.length - self.PicturesCount;
+            }
+            else {
+                self.ActiveStart--;
+            }
+            console.log(self.ActiveStart);
+            self.ActivePictures(self.AllPictures.slice(self.ActiveStart, self.ActiveStart + self.PicturesCount));
+        }
+        self.ChangePhoto = function (data) {
+            self.ImageUrl(data.PictureUrl);
+            console.log(self.ImageUrl);
+        }
+          /*  if (self.ActiveStart <= self.PicturesCount) {
+                self.ActiveStart = self.AllPictures.length;
+            }
+            else
+                self.ActiveStart -= 5;
+            self.ActivePictures = ko.observableArray(self.AllPictures.slice(self.ActiveStart - 5, self.ActiveStart));
+        }*/
+        self.RightThumbs = function () {
+
+            if (self.ActiveStart >= self.AllPictures.length - self.PicturesCount) {
+                self.ActiveStart = 0;
+            }
+            else {
+                self.ActiveStart++;
+            }
+            console.log(self.ActiveStart);
+            self.ActivePictures(self.AllPictures.slice(self.ActiveStart, self.ActiveStart + self.PicturesCount));
+        }
+        var rightMargin = function () {
+            switch (self.PicturesCount) {
+                case 5:
+                    return 11;
+                case 4:
+                    return 16;
+                case 3:
+                    return 24;
+                case 2:
+                    return 40;
+                default:
+                    return 40;
+            }
+        }
+        self.ThumbsStyle = "margin-right: " + rightMargin() + "%;";
+    }
+    GetProduct(@ViewBag.Id);
+    function OnSuccess(data) {
+        var model = new ProductModel(data);
+        ko.applyBindings(model);
+    }
+</script>
