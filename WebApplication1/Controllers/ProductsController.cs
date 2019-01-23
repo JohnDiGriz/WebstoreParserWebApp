@@ -1,14 +1,20 @@
-﻿    using System;
+    using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Data.Entity;
 
 namespace ParserWebApp.Controllers
 {
     public class ProductsController : Controller
     {
+        private readonly Models.SiteContext db;
 
+        public ProductsController() : base()
+        {
+            db = new Models.SiteContext();
+        }
         public ActionResult Index(int? page)
         {
             if (page == null) { page = 1; }
@@ -35,22 +41,17 @@ namespace ParserWebApp.Controllers
         }
         public ActionResult GetProduct(int id)
         {
-            ProductResponce responce=new ProductResponce();
-            using (Models.SiteContext db = new Models.SiteContext())
+            ProductResponce responce = new ProductResponce()
             {
-                var pictures = db.Pictures.ToList();
-                var prices = db.Prices.ToList();
-                var product = db.Products.Find(id);
-                responce.Product = product;
-                if (product.Pictures != null)
-                    responce.Thumbs = product.Pictures.ToList();
-                else
-                    responce.Thumbs = new List<Models.Picture>();
-                if (product.Prices != null)
-                    responce.PriceHistory = product.Prices.ToList();
-                else
-                    responce.PriceHistory = new List<Models.Price>();
-            }
+                PriceHistory = new List<Models.Price>(),
+                Thumbs = new List<Models.Picture>()
+            };
+            var product = db.Products.Include(x => x.Prices).Include(x => x.Pictures).First(x => x.Id == id);
+            responce.Product = product;
+            if (product.Pictures != null)
+                responce.Thumbs = product.Pictures.ToList();
+            if (product.Prices != null)
+                responce.PriceHistory = product.Prices.ToList();
             return Json(responce, JsonRequestBehavior.AllowGet);
         }
         class ProductsResponce
@@ -62,18 +63,24 @@ namespace ParserWebApp.Controllers
         public ActionResult GetProducts(int id)
         {
             ProductsResponce responce = new ProductsResponce() { Products = new List<Models.Product>() };
-            using (Models.SiteContext db = new Models.SiteContext())
+            responce.PageCount = db.Products.Count() / 20 + (db.Products.Count() % 20 == 0 ? 0 : 1);
+            if (responce.PageCount >= id)
             {
-                responce.PageCount = db.Products.Count() / 20 + (db.Products.Count() % 20 == 0 ? 0 : 1);
-                if (responce.PageCount >= id)
-                {
-                    responce.Products = db.Products.ToList().GetRange((id - 1) * 20, Math.Min(20, db.Products.Count() - (id - 1) * 20));
-                }
-                else
-                    responce.Products = null;
-                responce.PageNum = id;
+                responce.Products = db.Products.Skip((id - 1) * 20).Take(Math.Min(20, db.Products.Count() - (id - 1) * 20)).ToList();
             }
+            else
+                responce.Products = null;
+            responce.PageNum = id;
+
             return Json(responce, JsonRequestBehavior.AllowGet);
+        }
+        protected override void Dispose(bool disposing)
+        {
+            if(disposing)
+            {
+                db.Dispose();
+            }
+            base.Dispose(disposing);
         }
     }
 }
