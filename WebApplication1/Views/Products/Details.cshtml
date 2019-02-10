@@ -57,14 +57,14 @@
     function ProductModel(product) {
         var self = this;
         self.ImageUrl = ko.observable(product.ImageUrl);
-        self.AllPictures = product.Thumbs;
+        self.AllPictures = product.Pictures;
         self.PicturesCount = (self.AllPictures.length < 5 ? self.AllPictures.length : 5);
         self.ActivePictures = ko.observableArray(self.AllPictures.slice(0, self.PicturesCount));
         self.ActiveStart = 0;
         self.Name = ko.observable(product.Name);
         self.Price = ko.observable(product.Price);
         self.Description = ko.observable(product.Description);
-        self.Prices = ko.observableArray(product.PriceHistory);
+        self.Prices = ko.observableArray(product.Prices);
         self.LeftThumbs = function () {
             if (self.ActiveStart <= 0) {
                 self.ActiveStart = self.AllPictures.length - self.PicturesCount;

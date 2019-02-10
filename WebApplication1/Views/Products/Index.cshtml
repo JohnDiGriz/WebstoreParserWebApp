@@ -1,6 +1,4 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
+﻿@model ParserWebApp.ViewModels.ProductIndexViewModel
 
 <div class="row">
         <div data-bind="foreach: Products" class="row list-group">
@@ -73,7 +71,7 @@
             '"><a class="page-link" href="' + link(PageNum+1)+'">></a></li>';
         self.pagination = ko.observable(self.pagination);
     }
-    GetProducts(@ViewBag.PageNum);
+    GetProducts(@Model.PageNum);
     function OnSuccess(data) {
         var model = new ViewModel(data.Products, data.PageNum, data.PageCount);
         ko.applyBindings(model);

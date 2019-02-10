@@ -20,6 +20,10 @@ namespace Repositories.Repositories
         {
             return SiteContext.Products.Include(x => x.Prices).Include(x => x.Pictures).First(x => x.Id == id);
         }
+        public int GetPageCount(int productsOnPage)
+        {
+            return SiteContext.Products.Count() / productsOnPage + (SiteContext.Products.Count()%productsOnPage==0?0:1); 
+        }
         private Models.SiteContext SiteContext { get { return Context_ as Models.SiteContext; } }
     }
 }

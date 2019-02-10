@@ -5,48 +5,50 @@ using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
 using Repositories.Interfaces;
+using AutoMapper;
 
 namespace ParserWebApp.Controllers
 {
     public class ProductsController : Controller
     {
         private readonly IUnitOfWork db;
+        private readonly IMapper Mapper_;
         private IProductRepository Products { get { return db.ProductRepository; } }
         private int ProductsOnPage_ = 20;
-        public ProductsController(IUnitOfWork unitOfWork) : base()
+        public ProductsController(IUnitOfWork unitOfWork, IMapper mapper) : base()
         {
             db = unitOfWork;
+            Mapper_ = mapper;
         }
         public ActionResult Index(int? page)
         {
             if (page == null) { page = 1; }
-            ViewBag.PageNum = page;
-            return View();
+            var model = new ViewModels.ProductIndexViewModel();
+            model.PageNum = (int)page;
+            model.Name = "Home Page";
+            return View(model);
         }
         public ActionResult Details(int id)
         {
             var product = Products.Get(id);
-            var productsVM = new ViewModels.ProductDetailsViewModel()
+            if (product != null)
             {
-                Id = product.Id,
-                Name = product.Name
-            };
-            return View(productsVM);
+                var model = new ViewModels.ProductDetailsViewModel();
+                Mapper_.Map(product, model);
+                return View(model);
+            }
+            return View("Error");
         }
         public ActionResult GetProduct(int id)
         {
-            var responce = new ViewModels.ProductViewModel()
+            var product = Products.GetProduct(id);
+            if (product != null)
             {
-                PriceHistory = new List<ViewModels.PriceViewModel>(),
-                Thumbs = new List<ViewModels.PictureViewModel>()
-            };
-            var product = db.Products.Include(x => x.Prices).Include(x => x.Pictures).First(x => x.Id == id);
-            responce.Product = product;
-            if (product.Pictures != null)
-                responce.Thumbs = product.Pictures.ToList();
-            if (product.Prices != null)
-                responce.PriceHistory = product.Prices.ToList();
-            return Json(responce, JsonRequestBehavior.AllowGet);
+                var model = new ViewModels.ProductViewModel();
+                Mapper_.Map(product, model);
+                return Json(model, JsonRequestBehavior.AllowGet);
+            }
+            return View("Error");
         }
         private int LastPage(int objectsCount)
         {
@@ -54,19 +56,16 @@ namespace ParserWebApp.Controllers
         }
         public ActionResult GetProducts(int id)
         {
-            ProductsResponce responce = new ProductsResponce() { Products = new List<Models.Product>() };
-            responce.PageCount = db.Products.Count() / ProductsOnPage_ + LastPage(db.Products.Count());
-            if (responce.PageCount >= id)
+            var products = Products.GetPage(id, ProductsOnPage_);
+            if(products!=null)
             {
-                int skippedProducts = (id - 1) * ProductsOnPage_;
-                int displayedProducts = Math.Min(20, db.Products.Count() - skippedProducts);
-                responce.Products = db.Products.Skip(skippedProducts).Take(skippedProducts).ToList();
+                var model = new ViewModels.ProductListViewModel();
+                Mapper_.Map(products, model);
+                model.PageCount = Products.GetPageCount(ProductsOnPage_);
+                model.PageNum = id;
+                return Json(model, JsonRequestBehavior.AllowGet);
             }
-            else
-                responce.Products = null;
-            responce.PageNum = id;
-
-            return Json(responce, JsonRequestBehavior.AllowGet);
+            return View("Error");
         }
         protected override void Dispose(bool disposing)
         {
