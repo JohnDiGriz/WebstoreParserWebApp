@@ -3,11 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace ParserWebApp.Models
+namespace Repositories.Models
 {
-    public class Picture
+    public class Picture : BaseModel
     {
-        public int Id { get; set; }
         public string PictureUrl { get; set; }
         public int ProductId { get; set; }
         //public Product Product { get; set; }

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Data.Entity;
 
-namespace ParserWebApp.Models
+namespace Repositories.Models
 {
     public class SiteContext : DbContext
     {

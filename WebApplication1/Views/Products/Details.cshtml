@@ -1,4 +1,4 @@
-﻿
+﻿@model ParserWebApp.ViewModels.ProductDetailsViewModel
 <div class="container">
     <div class="card">
         <div class="container-fliud">
@@ -56,14 +56,14 @@
     }
     function ProductModel(product) {
         var self = this;
-        self.ImageUrl = ko.observable(product.Product.ImageUrl);
+        self.ImageUrl = ko.observable(product.ImageUrl);
         self.AllPictures = product.Thumbs;
         self.PicturesCount = (self.AllPictures.length < 5 ? self.AllPictures.length : 5);
         self.ActivePictures = ko.observableArray(self.AllPictures.slice(0, self.PicturesCount));
         self.ActiveStart = 0;
-        self.Name = ko.observable(product.Product.Name);
-        self.Price = ko.observable(product.Product.Price);
-        self.Description = ko.observable(product.Product.Description);
+        self.Name = ko.observable(product.Name);
+        self.Price = ko.observable(product.Price);
+        self.Description = ko.observable(product.Description);
         self.Prices = ko.observableArray(product.PriceHistory);
         self.LeftThumbs = function () {
             if (self.ActiveStart <= 0) {
@@ -77,15 +77,7 @@
         }
         self.ChangePhoto = function (data) {
             self.ImageUrl(data.PictureUrl);
-            console.log(self.ImageUrl);
         }
-          /*  if (self.ActiveStart <= self.PicturesCount) {
-                self.ActiveStart = self.AllPictures.length;
-            }
-            else
-                self.ActiveStart -= 5;
-            self.ActivePictures = ko.observableArray(self.AllPictures.slice(self.ActiveStart - 5, self.ActiveStart));
-        }*/
         self.RightThumbs = function () {
 
             if (self.ActiveStart >= self.AllPictures.length - self.PicturesCount) {
@@ -94,7 +86,6 @@
             else {
                 self.ActiveStart++;
             }
-            console.log(self.ActiveStart);
             self.ActivePictures(self.AllPictures.slice(self.ActiveStart, self.ActiveStart + self.PicturesCount));
         }
         var rightMargin = function () {
@@ -113,7 +104,7 @@
         }
         self.ThumbsStyle = "margin-right: " + rightMargin() + "%;";
     }
-    GetProduct(@ViewBag.Id);
+    GetProduct(@Model.Id);
     function OnSuccess(data) {
         var model = new ProductModel(data);
         ko.applyBindings(model);

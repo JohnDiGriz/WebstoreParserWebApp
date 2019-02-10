@@ -4,16 +4,18 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
+using Repositories.Interfaces;
 
 namespace ParserWebApp.Controllers
 {
     public class ProductsController : Controller
     {
-        private readonly Models.SiteContext db;
-
-        public ProductsController() : base()
+        private readonly IUnitOfWork db;
+        private IProductRepository Products { get { return db.ProductRepository; } }
+        private int ProductsOnPage_ = 20;
+        public ProductsController(IUnitOfWork unitOfWork) : base()
         {
-            db = new Models.SiteContext();
+            db = unitOfWork;
         }
         public ActionResult Index(int? page)
         {
@@ -21,30 +23,22 @@ namespace ParserWebApp.Controllers
             ViewBag.PageNum = page;
             return View();
         }
-        public ActionResult Details(int? id)
+        public ActionResult Details(int id)
         {
-            if (id == null)
-                return RedirectToAction("Index", "Products");
-            using (Models.SiteContext db = new Models.SiteContext())
+            var product = Products.Get(id);
+            var productsVM = new ViewModels.ProductDetailsViewModel()
             {
-                Models.Product product = db.Products.Find(id);
-                ViewBag.Title=product.Name;
-                ViewBag.Id = product.Id;
-            }
-            return View();
-        }
-        class ProductResponce
-        {
-            public Models.Product Product;
-            public List<Models.Picture> Thumbs;
-            public List<Models.Price> PriceHistory;
+                Id = product.Id,
+                Name = product.Name
+            };
+            return View(productsVM);
         }
         public ActionResult GetProduct(int id)
         {
-            ProductResponce responce = new ProductResponce()
+            var responce = new ViewModels.ProductViewModel()
             {
-                PriceHistory = new List<Models.Price>(),
-                Thumbs = new List<Models.Picture>()
+                PriceHistory = new List<ViewModels.PriceViewModel>(),
+                Thumbs = new List<ViewModels.PictureViewModel>()
             };
             var product = db.Products.Include(x => x.Prices).Include(x => x.Pictures).First(x => x.Id == id);
             responce.Product = product;
@@ -54,19 +48,19 @@ namespace ParserWebApp.Controllers
                 responce.PriceHistory = product.Prices.ToList();
             return Json(responce, JsonRequestBehavior.AllowGet);
         }
-        class ProductsResponce
+        private int LastPage(int objectsCount)
         {
-            public List<Models.Product> Products { get; set; }
-            public int PageCount;
-            public int PageNum;
+            return objectsCount % ProductsOnPage_ == 0 ? 0 : 1;
         }
         public ActionResult GetProducts(int id)
         {
             ProductsResponce responce = new ProductsResponce() { Products = new List<Models.Product>() };
-            responce.PageCount = db.Products.Count() / 20 + (db.Products.Count() % 20 == 0 ? 0 : 1);
+            responce.PageCount = db.Products.Count() / ProductsOnPage_ + LastPage(db.Products.Count());
             if (responce.PageCount >= id)
             {
-                responce.Products = db.Products.Skip((id - 1) * 20).Take(Math.Min(20, db.Products.Count() - (id - 1) * 20)).ToList();
+                int skippedProducts = (id - 1) * ProductsOnPage_;
+                int displayedProducts = Math.Min(20, db.Products.Count() - skippedProducts);
+                responce.Products = db.Products.Skip(skippedProducts).Take(skippedProducts).ToList();
             }
             else
                 responce.Products = null;

@@ -14,9 +14,7 @@ namespace ParserWebApp.Controllers
         }
         public ActionResult About()
         {
-            ViewBag.Message = "Please hire me :).";
-
-            return View();
+            return View(new ViewModels.MessageViewModel() { Name = "About", Message = "Please hire me :)." });
         }
     }
 }

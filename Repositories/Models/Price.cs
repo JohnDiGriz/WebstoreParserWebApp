@@ -4,11 +4,10 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace ParserWebApp.Models
+namespace Repositories.Models
 {
-    public class Price
+    public class Price : BaseModel
     {
-        public int Id { get; set; }
         public int ProductId { get; set; }
         //public Product Product { get; set; }
         public string PriceValue { get; set; }

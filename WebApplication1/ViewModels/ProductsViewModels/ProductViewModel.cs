@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace ParserWebApp.Models
+namespace ParserWebApp.ViewModels
 {
-    public class Product
+    public class ProductViewModel
     {
         public int Id { get; set; }
         public string Name { get; set; }
@@ -13,7 +13,7 @@ namespace ParserWebApp.Models
         public string Description { get; set; }
         public string Link { get; set; }
         public string ImageUrl { get; set; }
-        public ICollection<Price> Prices { get; set; }
-        public ICollection<Picture> Pictures { get; set; }
+        public ICollection<PriceViewModel> PriceHistory { get; set; }
+        public ICollection<PictureViewModel> Thumbs { get; set; }
     }
 }
