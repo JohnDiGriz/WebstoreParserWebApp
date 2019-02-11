@@ -5,7 +5,7 @@ using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repositories.Interfaces
+namespace ParserWebApp.DAL.Interfaces
 {
     public interface IRepository<TEntity> where TEntity : Models.BaseModel
     {

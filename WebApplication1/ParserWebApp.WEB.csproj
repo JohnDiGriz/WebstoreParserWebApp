@@ -248,7 +248,9 @@
     <Content Include="Web.Release.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
-    <Content Include="Views\Web.config" />
+    <Content Include="Views\Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
@@ -280,9 +282,13 @@
     <Service Include="{4A0DDDB5-7A95-4FBF-97CC-616D07737A77}" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Repositories\Repositories.csproj">
+    <ProjectReference Include="..\ParserWebApp.BLL\ParserWebApp.BLL.csproj">
+      <Project>{4ba1e4e2-4c5d-40ff-9071-c533d7287011}</Project>
+      <Name>ParserWebApp.BLL</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Repositories\ParserWebApp.DAL.csproj">
       <Project>{17245c43-7e18-478f-a497-c90b2a4d45d3}</Project>
-      <Name>Repositories</Name>
+      <Name>ParserWebApp.DAL</Name>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup>

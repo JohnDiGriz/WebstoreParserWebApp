@@ -6,13 +6,13 @@ using Ninject.Modules;
 using AutoMapper;
 using Ninject;
 
-namespace ParserWebApp.App_Start
+namespace ParserWebApp.WEB.App_Start
 {
     public class DependencyInjector : NinjectModule
     {
         public override void Load()
         {
-            Bind<Repositories.Interfaces.IUnitOfWork>().To<Repositories.UnitOfWork.UnitOfWork>();
+            Bind<ParserWebApp.DAL.Interfaces.IUnitOfWork>().To<ParserWebApp.DAL.UnitOfWork.UnitOfWork>();
             var mapperConfiguration = CreateConfiguration();
             Bind<MapperConfiguration>().ToConstant(mapperConfiguration).InSingletonScope();
             

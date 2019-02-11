@@ -9,7 +9,7 @@ using Ninject;
 using Ninject.Modules;
 using Ninject.Web.Mvc;
 
-namespace ParserWebApp
+namespace ParserWebApp.WEB
 {
     public class MvcApplication : System.Web.HttpApplication
     {

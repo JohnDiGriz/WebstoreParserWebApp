@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace ParserWebApp.Controllers
+namespace ParserWebApp.WEB.Controllers
 {
     public class HomeController : Controller
     {
@@ -14,7 +14,7 @@ namespace ParserWebApp.Controllers
         }
         public ActionResult About()
         {
-            return View(new ViewModels.MessageViewModel() { Name = "About", Message = "Please hire me :)." });
+            return View(new ViewModels.MessageViewModel() { Name = "About", Message = "Made by Serhii Havrylov." });
         }
     }
 }

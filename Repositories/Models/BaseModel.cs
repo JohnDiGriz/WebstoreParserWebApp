@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repositories.Models
+namespace ParserWebApp.DAL.Models
 {
     public class BaseModel
     {

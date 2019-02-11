@@ -5,7 +5,7 @@ using System.Data.Entity;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repositories.Repositories
+namespace ParserWebApp.DAL.Repositories
 {
     class ProductRepository : Repository<Models.Product>, Interfaces.IProductRepository
     {

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Data.Entity;
 using System.Linq.Expressions;
 
-namespace Repositories.Repositories
+namespace ParserWebApp.DAL.Repositories
 {
     public class Repository<TEntity> : Interfaces.IRepository<TEntity> where TEntity : Models.BaseModel
     {

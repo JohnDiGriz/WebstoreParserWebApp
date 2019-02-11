@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Repositories.UnitOfWork
+namespace ParserWebApp.DAL.UnitOfWork
 {
     public class UnitOfWork : Interfaces.IUnitOfWork
     {

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace Repositories.Models
+namespace ParserWebApp.DAL.Models
 {
     public class Picture : BaseModel
     {

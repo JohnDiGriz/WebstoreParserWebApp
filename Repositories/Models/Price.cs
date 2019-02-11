@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace Repositories.Models
+namespace ParserWebApp.DAL.Models
 {
     public class Price : BaseModel
     {

@@ -4,10 +4,10 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity;
-using Repositories.Interfaces;
+using ParserWebApp.DAL.Interfaces;
 using AutoMapper;
 
-namespace ParserWebApp.Controllers
+namespace ParserWebApp.WEB.Controllers
 {
     public class ProductsController : Controller
     {
