@@ -1,79 +1,73 @@
-﻿@model ParserWebApp.WEB.ViewModels.ProductIndexViewModel
-
+﻿@model ParserWebApp.WEB.ViewModels.ProductListViewModel
+@{ 
+    int iMin = 2;
+    int iMax = Model.PageCount - 1;
+    int Diap = 3;
+}
 <div class="row">
-        <div data-bind="foreach: Products" class="row list-group">
-            <div class="item col-xs-12 col-sm-6 col-md-4 col-lg-3">
-                <div class="thumbnail">
-                    <img class="group list-group-image img-responsive" data-bind="attr: {src: ImageUrl}" style="max-height: 200px; max-width: 425px" alt="" />
-                    <div class="caption">
-                        <h1 class="group inner list-group-item-heading"><a data-bind="text: Name, attr: {href: Link}"></a></h1>
-                        <p class="group inner list-group-item-text" data-bind="text: ShortDesc"></p>
-                        <div class="row">
-                            <h3 class="col-xs-12 col-md-6 rounded border" style="color: blue" data-bind="text: Price">
-                            </h3>
+        <div  class="row list-group">
+            @foreach (ParserWebApp.WEB.ViewModels.ProductViewModel product in Model.Products)
+            {
+                <div class="item col-xs-12 col-sm-6 col-md-4 col-lg-3">
+                    <div class="thumbnail">
+                        <img class="group list-group-image img-responsive" src="@product.ImageUrl" 
+                             style="max-height: 200px; max-width: 425px" alt="" />
+                        <div class="caption">
+                            <h1 class="group inner list-group-item-heading">
+                                <a href="@Url.Action("Details", "Products")/@product.Id">
+                                    @product.Name
+                                    </a></h1>
+                            <p class="group inner list-group-item-text">
+                                @product.ShortDescription
+                            </p>
+                            <div class="row">
+                                <h3 class="col-xs-12 col-md-6 rounded border" style="color: blue">
+                                    @product.Price
+                                </h3>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            }
         </div>
     </div>
 <div class="row">
     <div class="col-md-6 offset-md-3">
         <ul class="pagination" data-bind="html: pagination">
-
+            <li class="page-item @(Model.PageNum == 1 ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", "Products")/?page=@Model.PageNum-1"><</a>
+            </li>
+            <li class="page-item @(Model.PageNum == 1 ? "active" : "")">
+                <a class="page-link" href="@Url.Action("Index", "Products")/?page=1">1</a>
+            </li>
+            diap=3
+            iMIN=2
+            iMax=PageCount-1
+            @{string htmlLast = "";}
+            @if (Model.PageNum - Diap > iMin)
+            {
+                <li class="page-item disabled"><a class="page-link">...</a></li>
+                iMin = Model.PageNum - 3;
+            }
+            @if (Model.PageNum + Diap < iMax)
+            {
+                iMax = Model.PageNum + Diap;
+                htmlLast = "<li class=\"page-item disabled\"><a class=\"page-link\">...</a></li>";
+            }
+            @for (int i = iMin; i <= iMax; i++)
+            {
+                <li class="page-item @(Model.PageNum == i ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", "Products")/?page=@i">@i</a>
+                </li>
+            }
+            @htmlLast
+            @if (Model.PageCount != 1) {
+                <li class="page-item @(Model.PageNum == Model.PageCount ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", "Products")/?page=@Model.PageCount">
+                        @Model.PageCount</a></li> 
+            }
+            <li class="page-item @(Model.PageNum == Model.PageCount ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", "Products")/?page=@Model.PageCount">></a></li>';
         </ul>
     </div>
 </div>
-<script>
-    function GetProducts(pageNum) {
-        $.get('@Url.Action("GetProducts", "Products")' + '/' + pageNum, OnSuccess, "json").fail(function (data) {
-            alert("Fail")
-        });
-    }
-    function ViewModel(products, PageNum, PageCount) {
-        const diap = 3;
-        var self = this;
-        for (let product of products) {
-            product.ShortDesc = ko.pureComputed(function () {
-                return product.Description.substring(0, 200) + (product.Description.length<40?"":"...");
-            });
-            product.Link = ko.pureComputed(function () {
-                return "@Url.Action("Details", "Products")" + "/" + product.Id;
-            });
-        }
-        self.Products = ko.observableArray(products);
-        var link = function (num) { return "@Url.Action("Index", "Products")"+"/?page=" + num; };
-        self.pagination = '<li class="page-item ' + (PageNum == 1 ? 'disabled' : '') +
-            '"><a class="page-link" href="'+link(PageNum-1)+'"><</a></li>' +
-            '<li class="page-item ' + (PageNum == 1 ? 'active' : '') +
-            '"><a class="page-link" href="' + link(1)+'">1</a></li>';
-        var iMin = 2;
-        var iMax = PageCount - 1;
-        var htmlLast = '';
-        if (PageNum - diap > iMin) {
-            self.pagination += '<li class="page-item disabled"><a class="page-link">...</a></li>';
-            iMin = PageNum - 3;
-        }
-        if (PageNum + diap < iMax) {
-            htmlLast = '<li class="page-item disabled"><a class="page-link">...</a></li>';
-            iMax = PageNum + diap;
-        }
-        for (i = iMin; i <= iMax; i++) {
-            self.pagination += '<li class="page-item ' + (PageNum == i ? 'active' : '') +
-                '"><a class="page-link" href="'+link(i)+'">' + i + '</a></li>';
-        }
-        self.pagination += htmlLast;
-        if (PageCount != 1) {
-            self.pagination += '<li class="page-item ' + (PageNum == PageCount ? 'active' : '') +
-                '"><a class="page-link" href="' + link(PageCount)+'">' + PageCount + '</a ></li > ';
-        }
-        self.pagination += '<li class="page-item ' + (PageNum == PageCount ? 'disabled' : '') +
-            '"><a class="page-link" href="' + link(PageNum+1)+'">></a></li>';
-        self.pagination = ko.observable(self.pagination);
-    }
-    GetProducts(@Model.PageNum);
-    function OnSuccess(data) {
-        var model = new ViewModel(data.Products, data.PageNum, data.PageCount);
-        ko.applyBindings(model);
-    }
-</script>

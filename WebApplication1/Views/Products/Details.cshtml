@@ -1,112 +1,69 @@
-﻿@model ParserWebApp.WEB.ViewModels.ProductDetailsViewModel
-<div class="container">
-    <div class="card">
-        <div class="container-fliud">
-            <div class="wrapper row">
-                <div class="col-md-6">
-                    <div class="tab-content">
-                        <div class="tab-pane active" id="pic-1"><img class="img-thumbnail main-img" data-bind="attr: {src: ImageUrl}" /></div>
+﻿@model ParserWebApp.WEB.ViewModels.ProductViewModel
+@{
+    string ActiveImage = Model.ImageUrl;
+    int PicturesCount = Math.Min(Model.Pictures.Count, 5);
+    int ActiveStart = 0;
+    var ActivePictures = Model.Pictures.GetRange(0, PicturesCount);
+    string rightMargin;
+    switch (PicturesCount)
+    {
+        case 5:
+            rightMargin = "11";
+            break;
+        case 4:
+            rightMargin = "16";
+            break;
+        case 3:
+            rightMargin = "24";
+            break;
+        default:
+            rightMargin = "40";
+            break;
+    }
+    string ThumbsStyle = "margin-right: " + rightMargin + "%;";
+}
+<div class="owl-carousel owl-theme">
+    <div class="item"><h4>1</h4></div>
+    <div class="item"><h4>2</h4></div>
+    <div class="item"><h4>3</h4></div>
+    <div class="item"><h4>4</h4></div>
+    <div class="item"><h4>5</h4></div>
+    <div class="item"><h4>6</h4></div>
+    <div class="item"><h4>7</h4></div>
+    <div class="item"><h4>8</h4></div>
+    <div class="item"><h4>9</h4></div>
+    <div class="item"><h4>10</h4></div>
+    <div class="item"><h4>11</h4></div>
+    <div class="item"><h4>12</h4></div>
+</div>
+    <div class="container">
+        <div class="card">
+            <div class="container-fliud">
+                <div class="wrapper row">
+                    
+                    <div class="details col-md-6">
+                        <h1>
+                            @Model.Name
+                        </h1>
+                        <h4 class="font-bold">Price: <span style="color: blue">@Model.Price</span></h4>
+                        <div>
+                            <p class="product-description">@Model.Description</p>
 
-                        <ul class="preview-thumbnail nav nav-tabs">
-
-                            <li class="thumb-btn">
-                                <button class="btn" data-bind="click: LeftThumbs"><</button>
-                            </li>
-                            <li>
-                                <ul class="nav nav-tabs thumbs-list" data-bind="foreach: ActivePictures">
-                                    <li class="thumb" data-bind="attr: {style: $root.ThumbsStyle}">
-                                        <a data-bind="click: $root.ChangePhoto"  data-toggle="tab" class="thumb-link">
-                                            <img class="img-thumbnail thumb-img" data-bind="attr: {src: PictureUrl}" />
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="thumb-btn">
-                                <button class="btn"  data-bind="click: RightThumbs">></button>
-                            </li>
-                        </ul>
+                        </div>
                     </div>
                 </div>
-                <div class="details col-md-6">
-                    <h1 data-bind="text: Name"></h1>
-                    <h4 class="font-bold">Price: <span style="color: blue" data-bind="text: Price"></span></h4>
-                    <div>
-                        <p class="product-description" data-bind="html: Description"></p>
-
-                    </div>
+                <div class="row">
+                    <h1 class="font-bold text-center">Price History</h1>
                 </div>
-            </div>
-            <div class="row">
-                <h1 class="font-bold text-center">Price History</h1>
-            </div>
-            <div class="row" data-bind="foreach: Prices">
-                <div class="col-sm-2 text-center">
-                    <h4 data-bind="text: DateStr"></h4>
-                    <h3 class="font-bold" style="color: blue;" data-bind="text: PriceValue"></h3>
+                <div class="row">
+                    @foreach (var price in Model.Prices)
+                    {
+                        <div class="col-sm-2 text-center">
+                            <h4>@price.DateStr</h4>
+                            <h3 class="font-bold" style="color: blue;">@price.PriceValue</h3>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     </div>
-</div>
-<script>
-    function GetProduct(id) {
-        $.get('@Url.Action("GetProduct", "Products")' + '/' + id, OnSuccess, "json").fail(function (data) {
-            alert("Fail")
-        });
-    }
-    function ProductModel(product) {
-        var self = this;
-        self.ImageUrl = ko.observable(product.ImageUrl);
-        self.AllPictures = product.Pictures;
-        self.PicturesCount = (self.AllPictures.length < 5 ? self.AllPictures.length : 5);
-        self.ActivePictures = ko.observableArray(self.AllPictures.slice(0, self.PicturesCount));
-        self.ActiveStart = 0;
-        self.Name = ko.observable(product.Name);
-        self.Price = ko.observable(product.Price);
-        self.Description = ko.observable(product.Description);
-        self.Prices = ko.observableArray(product.Prices);
-        self.LeftThumbs = function () {
-            if (self.ActiveStart <= 0) {
-                self.ActiveStart = self.AllPictures.length - self.PicturesCount;
-            }
-            else {
-                self.ActiveStart--;
-            }
-            console.log(self.ActiveStart);
-            self.ActivePictures(self.AllPictures.slice(self.ActiveStart, self.ActiveStart + self.PicturesCount));
-        }
-        self.ChangePhoto = function (data) {
-            self.ImageUrl(data.PictureUrl);
-        }
-        self.RightThumbs = function () {
-
-            if (self.ActiveStart >= self.AllPictures.length - self.PicturesCount) {
-                self.ActiveStart = 0;
-            }
-            else {
-                self.ActiveStart++;
-            }
-            self.ActivePictures(self.AllPictures.slice(self.ActiveStart, self.ActiveStart + self.PicturesCount));
-        }
-        var rightMargin = function () {
-            switch (self.PicturesCount) {
-                case 5:
-                    return 11;
-                case 4:
-                    return 16;
-                case 3:
-                    return 24;
-                case 2:
-                    return 40;
-                default:
-                    return 40;
-            }
-        }
-        self.ThumbsStyle = "margin-right: " + rightMargin() + "%;";
-    }
-    GetProduct(@Model.Id);
-    function OnSuccess(data) {
-        var model = new ProductModel(data);
-        ko.applyBindings(model);
-    }
-</script>

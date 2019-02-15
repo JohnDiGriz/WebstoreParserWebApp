@@ -5,7 +5,7 @@ using System.Web;
 
 namespace ParserWebApp.WEB.ViewModels
 {
-    public class ProductListViewModel
+    public class ProductListViewModel : BaseViewModel
     {
         public ProductListViewModel()
         {

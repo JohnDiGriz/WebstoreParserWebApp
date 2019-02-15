@@ -23,49 +23,34 @@ namespace ParserWebApp.WEB.Controllers
         public ActionResult Index(int? page)
         {
             if (page == null) { page = 1; }
-            var model = new ViewModels.ProductIndexViewModel();
-            model.PageNum = (int)page;
-            model.Name = "Home Page";
-            return View(model);
-        }
-        public ActionResult Details(int id)
-        {
-            var product = Products.Get(id);
-            if (product != null)
+            var products = Products.GetPage((int)page, ProductsOnPage_);
+            if (products != null)
             {
-                var model = new ViewModels.ProductDetailsViewModel();
-                Mapper_.Map(product, model);
+                var model = new ViewModels.ProductListViewModel();
+                Mapper_.Map(products, model.Products);
+                model.PageCount = Products.GetPageCount(ProductsOnPage_);
+                model.PageNum = (int)page;
+                model.Name = "Home Page";
                 return View(model);
             }
             return View("Error");
         }
-        public ActionResult GetProduct(int id)
+        public ActionResult Details(int? id)
         {
-            var product = Products.GetProduct(id);
+            if (id == null)
+                return View("Error");
+            var product = Products.GetProduct((int)id);
             if (product != null)
             {
                 var model = new ViewModels.ProductViewModel();
                 Mapper_.Map(product, model);
-                return Json(model, JsonRequestBehavior.AllowGet);
+                return View(model);
             }
             return View("Error");
         }
         private int LastPage(int objectsCount)
         {
             return objectsCount % ProductsOnPage_ == 0 ? 0 : 1;
-        }
-        public ActionResult GetProducts(int id)
-        {
-            var products = Products.GetPage(id, ProductsOnPage_);
-            if(products!=null)
-            {
-                var model = new ViewModels.ProductListViewModel();
-                Mapper_.Map(products, model);
-                model.PageCount = Products.GetPageCount(ProductsOnPage_);
-                model.PageNum = id;
-                return Json(model, JsonRequestBehavior.AllowGet);
-            }
-            return View("Error");
         }
         protected override void Dispose(bool disposing)
         {

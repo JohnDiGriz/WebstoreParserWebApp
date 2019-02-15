@@ -14,7 +14,7 @@ namespace ParserWebApp.DAL.Repositories
         {
             int skippedProducts = (pageNumber - 1) * productsCount;
             int displayedProducts = Math.Min(productsCount, SiteContext.Products.Count() - skippedProducts);
-            return SiteContext.Products.Skip(skippedProducts).Take(displayedProducts).ToList();
+            return SiteContext.Products.OrderBy(x=>x.Name).Skip(skippedProducts).Take(displayedProducts).ToList();
         }
         public Models.Product GetProduct(int id)
         {

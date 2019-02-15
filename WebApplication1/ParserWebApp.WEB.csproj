@@ -175,8 +175,6 @@
     <Compile Include="ViewModels\HomeViewModels\MessageViewModel.cs" />
     <Compile Include="ViewModels\ProductsViewModels\PictureViewModel.cs" />
     <Compile Include="ViewModels\ProductsViewModels\PriceViewModel.cs" />
-    <Compile Include="ViewModels\ProductsViewModels\ProductDetailsViewModel.cs" />
-    <Compile Include="ViewModels\ProductsViewModels\ProductIndexViewModel.cs" />
     <Compile Include="ViewModels\ProductsViewModels\ProductListViewModel.cs" />
     <Compile Include="ViewModels\ProductsViewModels\ProductViewModel.cs" />
   </ItemGroup>
@@ -188,6 +186,16 @@
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\details.css" />
+    <Content Include="Content\owlcarousel\assets\ajax-loader.gif" />
+    <Content Include="Content\owlcarousel\assets\owl.carousel.css" />
+    <Content Include="Content\owlcarousel\assets\owl.carousel.min.css" />
+    <Content Include="Content\owlcarousel\assets\owl.theme.default.css" />
+    <Content Include="Content\owlcarousel\assets\owl.theme.default.min.css" />
+    <Content Include="Content\owlcarousel\assets\owl.theme.green.css" />
+    <Content Include="Content\owlcarousel\assets\owl.theme.green.min.css" />
+    <Content Include="Content\owlcarousel\assets\owl.video.play.png" />
+    <Content Include="Content\owlcarousel\owl.carousel.js" />
+    <Content Include="Content\owlcarousel\owl.carousel.min.js" />
     <Content Include="favicon.ico" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -216,6 +224,8 @@
     <Content Include="Content\bootstrap-reboot.css.map" />
     <Content Include="Content\bootstrap-grid.min.css.map" />
     <Content Include="Content\bootstrap-grid.css.map" />
+    <Content Include="Content\owlcarousel\LICENSE" />
+    <Content Include="Content\owlcarousel\README.md" />
     <None Include="Scripts\jquery-3.3.1.intellisense.js" />
     <Content Include="Scripts\jquery-3.3.1.js" />
     <Content Include="Scripts\jquery-3.3.1.min.js" />
